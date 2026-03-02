@@ -1,0 +1,97 @@
+@startuml
+
+class GameManager {
+  - deck: CardDeck
+  + play_game(table: Table)
+  + start_new_round()
+  + end_round()
+}
+
+class Table {
+  - players: list<Player>
+  - pot: float
+  - community_cards: list<Card>
+  + add_player(player: Player)
+  + collect_bets()
+  + distribute_winnings(winners: list<Player>)
+}
+
+class Player {
+  - id: int
+  - chips: float
+  - hand: list<Card>
+  - folded: bool
+  + fold()
+  + place_bet(amount: float)
+  + show_hand()
+}
+
+class CardDeck {
+  - cards: list<Card>
+  + shuffle()
+  + deal_card(): Card
+}
+
+class BettingRound {
+  - pot: float
+  - active_players: list<Player>
+  + collect_bets()
+  + calculate_minimum_raise()
+}
+
+class Ranker {
+  + rank_hands(hands: list<list<Card>>): dict
+}
+
+class WinnerResolver {
+  + determine_winner(hands: list<list<Card>>, community_cards: list<Card>): list<Player>
+}
+
+class HandEvaluator {
+  + evaluate(hand: list<Card>): tuple
+}
+
+class Card {
+  - suit: Suit
+  - value: Value
+  + __repr__()
+  + __eq__(other: Card)
+  + __lt__(other: Card)
+}
+
+enum Suit {
+  Hearts
+  Diamonds
+  Clubs
+  Spades
+}
+
+enum Value {
+  Two
+  Three
+  Four
+  Five
+  Six
+  Seven
+  Eight
+  Nine
+  Ten
+  Jack
+  Queen
+  King
+  Ace
+}
+
+GameManager "1" -- "*" Table : manages
+Table "1" -- "*" Player : contains
+Table "1" -- "1" CardDeck : uses
+GameManager "1" -- "1" BettingRound : controls
+BettingRound "1" -- "*" Player : collects bets from
+GameManager "1" -- "1" Ranker : evaluates hands using
+GameManager "1" -- "1" WinnerResolver : resolves winners using
+WinnerResolver "1" -- "1" HandEvaluator : ranks hands using
+CardDeck "1" -- "*" Card : holds
+Player "1" -- "*" Card : holds
+Table "1" -- "*" Card : holds
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+
+actor "User Interface" as ui
+participant "Game Manager" as gm
+participant "Table" as t
+participant "Players" as pl
+participant "Card Deck" as cd
+participant "Betting Round" as br
+participant "Ranker" as rk
+participant "Winner Resolver" as wr
+
+ui -> gm: Start Game
+gm -> t: Initialize Table
+activate t
+t -> pl: Create Players
+pl -> t: Join Table
+deactivate pl
+t -> cd: Shuffle Cards
+activate cd
+cd -> t: Deal Initial Hands
+deactivate cd
+gm -> br: Start Betting Round
+br -> pl: Collect Bets
+pl -> br: Place Bets
+br -> t: Update Pot
+t -> br: End Betting Round
+deactivate br
+gm -> rk: Evaluate Hands
+rk -> gm: Return Evaluation Results
+gm -> wr: Resolve Winners
+wr -> gm: Return Winners
+gm -> ui: Announce Winner
+deactivate t
+deactivate gm
+
+@enduml
