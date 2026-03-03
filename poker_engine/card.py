@@ -1,4 +1,7 @@
-from constants import Suit, Value
+"""
+Модуль карты
+"""
+from .constants import Suit, Value
 
 class Card:
     """
@@ -28,11 +31,13 @@ class Card:
 
     def __eq__(self, other: Card):
         if isinstance(other, Card):
-            return self.__value == other.__value
+            return self.__value == other.value
         return NotImplemented
 
     def __lt__(self, other: Card):
-        return self.__value < other.__value
+        if isinstance(other, Card):
+            return self.__value.value < other.value.value
+        return NotImplemented
 
     def __hash__(self):
         return hash((self.__suit, self.__value))

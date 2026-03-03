@@ -1,22 +1,51 @@
 from random import shuffle
 
+from poker_engine.card import Card
+from poker_engine.constants import Suit, Value
+
 
 class CardDeck:
     """
     class for deck
     """
 
-    # amount of cards in deck
-    # CARDS_AMOUNT = 52
+    CARDS_AMOUNT = 52
+    """amount of cards in deck"""
 
-    # def __init__(self):
-    #     self.__deck = []
-    #     self.__generate_deck()
+    def __init__(self):
+        self.__cards = [
+            Card(suit, value)
+            for suit in Suit
+            for value in Value
+        ]
+        shuffle(self.__cards)
 
-    # def __generate_deck(self):
-    #     """
-    #     deck generator
-    #     """
-    #     for card_id in range(CardDeck.CARDS_AMOUNT):
-    #         self.__deck.append(Card(card_id))
-    #     shuffle(self.__deck)
+    @property
+    def cards(self) -> list:
+        return self.__cards
+
+    def shuffle(self) -> None:
+        """
+        Тосовка
+        """
+        shuffle(self.__cards)
+
+    def draw_card(self) -> Card:
+        """
+        Берем верхнюю карту
+        """
+        if not self.__cards:
+            raise IndexError('Deck empty')
+        return self.__cards.pop()
+
+    def reset(self) -> None:
+        """
+        Ресетим колоду и мешаем
+        """
+        self.__init__()
+
+    def __len__(self) -> int:
+        return len(self.__cards)
+
+    def __repr__(self) -> str:
+        return f"<CardDeck ({len(self)} карт)>"
