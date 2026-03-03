@@ -1,17 +1,86 @@
-from typing import Dict, List, Tuple
+from abc import ABC, abstractmethod
+from typing import Dict, List, Tuple, Union
 
 from poker_engine.card import Card
-from poker_engine.constants import Value
+from poker_engine.constants import Combination, Value
+
+
+class HandValidator(ABC):
+    @abstractmethod
+    def validate(self, cards: List[Card]) -> Union[None, Combination]:
+        pass
+
+
+class RoyalFlushValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class StraightFlushValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class FourOfAKindValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class FullHouseValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class FlushValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class StraightValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class ThreeOfAKindValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class TwoPairsValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
+
+
+class OnePairValidator(HandValidator):
+    def validate(self, cards: List[Card]):
+        pass
 
 
 class Ranker:
-    def evaluate_hand(self, cards: List[Card]) -> Tuple[int, List[Card]]:
-        """Оценивает силу руки и возвращает лучший набор карт и ранг комбинации."""
-        pass
 
-    def compare_hands(self, hands: List[Tuple[int, List[Card]]]) -> List[int]:
-        """Сравнивает несколько рук и возвращает индексы выигравших игроков."""
-        pass
+    def __init__(self) -> None:
+        self.__validators = [
+            RoyalFlushValidator(),
+            StraightFlushValidator(),
+            FourOfAKindValidator(),
+            FullHouseValidator(),
+            FlushValidator(),
+            StraightValidator(),
+            ThreeOfAKindValidator(),
+            TwoPairsValidator(),
+            OnePairValidator()
+        ]
+
+    def evaluate_hand(self, cards: List[Card]) -> Tuple[int, List[Card]]:
+        """
+        Оценивает силу руки и возвращает лучший набор карт и ранг комбинации.
+        """
+        hand = self.__sort_by_strength(cards)
+        for validator in self.__validators:
+            result = validator.validate(hand)
+            if result:
+                return result
+        return (Combination.HIGH_CARD, hand[:5])
 
     def get_combination_name(self, rank: int) -> str:
         """Возвращает название комбинации по её рангу."""
@@ -42,6 +111,6 @@ class Ranker:
         return {key: val for key, val in cd_dict.items() if val > 1}
 
     @staticmethod
-    def sort_by_strength(cards: List[Card]) -> List[Card]:
+    def __sort_by_strength(cards: List[Card]) -> List[Card]:
         """Сортирует карты по убыванию силы."""
         return sorted(cards, reverse=True)
