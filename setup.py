@@ -16,7 +16,7 @@ setup(
     # ],
     license='MIT License',
     keywords='poker game engine casino',
-    url='https://github.com/yourusername/poker-engine',
+    url='https://github.com/maximRRStudios/poker-engine',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

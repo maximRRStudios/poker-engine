@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from itertools import combinations
 from typing import Dict, List, Tuple, Union
 
 from poker_engine.card import Card
@@ -33,7 +34,9 @@ class FullHouseValidator(HandValidator):
 
 class FlushValidator(HandValidator):
     def validate(self, cards: List[Card]):
-        pass
+        if Ranker.is_flush(cards):
+            return Combination.FLUSH
+        return None
 
 
 class StraightValidator(HandValidator):
@@ -89,8 +92,23 @@ class Ranker:
     @staticmethod
     def is_straight(cards: List[Card]) -> bool:
         """Проверяет, образуют ли карты стрит."""
+        # Получаем список значений карт (преобразуем в цифры)
+        values = sorted([card.value.value for card in cards])
 
-        pass
+        # Особый случай колеса (A, 2, 3, 4, 5)
+        if set(values) & {2, 3, 4, 5, 14} == {2, 3, 4, 5, 14}:
+            return True
+
+        # Генерация всех возможных пятикарточных комбинаций
+        five_card_combinations = combinations(values, 5)
+
+        # Проверяем каждую комбинацию на предмет образования стрита
+        for combo in five_card_combinations:
+            # Проверяем, что все карты идут подряд
+            if all(combo[i + 1] == combo[i] + 1 for i in range(4)):
+                return True
+
+        return False
 
     @staticmethod
     def is_flush(cards: List[Card]) -> bool:
